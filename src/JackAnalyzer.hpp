@@ -5,10 +5,10 @@
 class JackAnalyzer {
 public:
 	void analyze(string sourceName);
-private:
-	//vector<string> split(const string& str, char c);
-	void getFileName(string sourceName, vector<string>& inputNames, vector<string>& outputNames);
 
+private:
+
+	void getFileName(string sourceName, vector<string>& inputNames, vector<string>& outputNames);
 
 };
 

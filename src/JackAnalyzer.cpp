@@ -1,7 +1,11 @@
 #include "JackAnalyzer.hpp"
 #include "JackTokenizer.hpp"
 #include "CompilationEngine.hpp"
+#if defined _WIN32
 #include <filesystem>
+#elif defined _LINUX_
+#include <dirent.h>
+#endif
 
 void JackAnalyzer::analyze(string sourceName) {
 	vector<string> inputNames, outputNames;
@@ -32,8 +36,9 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 	else {
 		// a directory containing many .jack files
 
-		std::string path = sourceName;
-		for (const auto& entry : filesystem::directory_iterator(path))
+		#if defined _WIN32
+
+		for (const auto& entry : filesystem::directory_iterator(sourceName))
 		{
 			string fileName = entry.path().string();
 			if (fileName.size() > 5 && fileName.substr(fileName.size() - 5) == ".jack") {
@@ -45,29 +50,35 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
 			}
 		}
+
+		#elif defined _LINUX_
+
+		struct dirent* ptr;
+		DIR* dir;
+		dir = opendir(sourceName.c_str());
+
+		//for (const auto& entry : experimental::filesystem::directory_iterator(path))
+		while (ptr = readdir(dir))
+		{
+			if (ptr->d_name[0] == '.')
+				continue;
+			//string fileName = entry.path().string();
+			string fileName = sourceName + "/" + ptr->d_name;
+			if (fileName.size() > 5 && fileName.substr(fileName.size() - 5) == ".jack") {
+				// extract one .jack file
+
+				cout << "input " << fileName << endl;
+
+				inputNames.push_back(fileName);
+				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
+			}
+		}
+
+		#endif
 	}
 }
 /*
 #include <dirent.h>
-
-JackAnalyzer::JackAnalyzer(string sourceName) {
-	vector<string> inputFiles = getFileName(inputName, outputName);
-
-	vector<vector<string>> fields;
-	for (string inputFile : inputFiles)
-	{
-		
-		vector<string> inLines = preprocessor.preprocess();				//preprocess input file
-		Parser parser(extractFileName(inputFile));
-		vector<vector<string>> fieldsOneFile = parser.parse(inLines);			//parse
-		for (vector<string> field : fieldsOneFile)
-			fields.push_back(field);
-	}
-	Code code(outputName);											//build code tables
-	code.generateCode(fields);										//do translation
-
-	cout << "Output file is " << outputName << endl;
-}
 
 vector<string> JackAnalyzer::split(const string& str, char c)
 {
@@ -100,25 +111,7 @@ vector<string> JackAnalyzer::getFileName(const string& inputName, string& output
 	}
 	else
 	{
-		//directory
-		struct dirent* ptr;
-		DIR* dir;
-
-		std::string path = inputName;
-		dir = opendir(path.c_str());
-
-		outputName = inputName + "/" + *(split(path, '/').end() - 1) + ".asm";
-
-		//for (const auto& entry : experimental::filesystem::directory_iterator(path))
-		while (ptr = readdir(dir))
-		{
-			if (ptr->d_name[0] == '.')
-				continue;
-			//string fileName = entry.path().string();
-			string fileName = path + "/" + ptr->d_name;
-			if (fileName.size() > 3 && fileName.substr(fileName.size() - 3) == ".vm")
-				fileNames.push_back(fileName);
-		}
+		
 	}
 	return fileNames;
 }

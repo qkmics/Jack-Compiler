@@ -15,9 +15,6 @@ enum KeyWord {CLASS,CONSTRUCTOR,FUNCTION,METHOD,FIELD
 	,LET,DO,IF,ELSE,WHILE
 	,RETURN
 };
-//extern const int size;
-
-//extern vector<string> Keywords;
 
 const vector<string> Keywords = {
 	"class","constructor","function","method","field"

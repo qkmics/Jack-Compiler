@@ -1,7 +1,7 @@
 #include "JackAnalyzer.hpp"
 #include "JackTokenizer.hpp"
 #include "CompilationEngine.hpp"
-#include <filesystem>
+
 /*
 //split a string 
 vector<string> split(const string& str, char c)
@@ -104,15 +104,5 @@ int main(int argc, char* argv[])
 	shared_ptr<JackAnalyzer> jackAnalyzer(new JackAnalyzer());
 	jackAnalyzer->analyze(sourceName);
 	
-	//cin >> inputName;
-
-
-	/*
-	vector<string> inputNames, outputNames;
-
-	getFileName(inputName, inputNames, outputNames);
-	for (int i = 0;i < inputNames.size();i++) {
-		tokenize(inputNames[i],outputNames[i]);
-	}*/
 	return 0;
 }

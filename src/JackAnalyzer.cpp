@@ -3,7 +3,7 @@
 #include "CompilationEngine.hpp"
 #if defined _WIN32
 #include <filesystem>
-#elif defined _LINUX_
+#elif defined __linux__
 #include <dirent.h>
 #endif
 
@@ -34,24 +34,27 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 		outputNames.push_back(sourceName.substr(0, sourceName.size() - 5) + ".my.xml");
 	}
 	else {
-		// a directory containing many .jack files
+		// input sourceName is a directory containing many .jack files
+		// need to extract all .jack file under this directory
 
 		#if defined _WIN32
-
+		// windows version
+		
 		for (const auto& entry : filesystem::directory_iterator(sourceName))
 		{
 			string fileName = entry.path().string();
 			if (fileName.size() > 5 && fileName.substr(fileName.size() - 5) == ".jack") {
 				// extract one .jack file
 
-				cout << "input " << fileName << endl;
+				cout << "Compiling " << fileName << endl;
 
 				inputNames.push_back(fileName);
 				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
 			}
 		}
 
-		#elif defined _LINUX_
+		#elif defined __linux__
+		// linux version
 
 		struct dirent* ptr;
 		DIR* dir;
@@ -67,7 +70,7 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 			if (fileName.size() > 5 && fileName.substr(fileName.size() - 5) == ".jack") {
 				// extract one .jack file
 
-				cout << "input " << fileName << endl;
+				cout << "Compiling " << fileName << endl;
 
 				inputNames.push_back(fileName);
 				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
@@ -77,43 +80,3 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 		#endif
 	}
 }
-/*
-#include <dirent.h>
-
-vector<string> JackAnalyzer::split(const string& str, char c)
-{
-	vector<string> result;
-	string temp = "";
-	for (int i = 0;i < str.size();i++)
-	{
-		if (str[i] != c)
-		{
-			temp.push_back(str[i]);
-		}
-		else
-		{
-			result.push_back(temp);
-			temp = "";
-		}
-	}
-	if (temp.size())
-		result.push_back(temp);
-	return result;
-}
-
-vector<string> JackAnalyzer::getFileName(const string& inputName, string& outputName)
-{
-	vector<string> fileNames;
-	if (inputName.size() > 3 && inputName.substr(inputName.size() - 5) == ".jack") //singel file
-	{
-		fileNames.push_back(inputName);
-		outputName = inputName.substr(0, inputName.size() - 5) + ".xml";
-	}
-	else
-	{
-		
-	}
-	return fileNames;
-}
-
-*/

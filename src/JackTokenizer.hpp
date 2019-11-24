@@ -8,12 +8,14 @@ public:
 
 	bool hasMoreTokens();
 
-	enum TokenType tokenType();
-
+	// advance to get the next token
 	void advance();
 
-	enum KeyWord keyWord();
+	// return type of currenct token
+	enum TokenType tokenType();
 
+	// return value of current token
+	enum KeyWord keyWord();
 	string symbol();
 	string identifier();
 	string intVal();
@@ -21,11 +23,18 @@ public:
 
 private:
 	ifstream inputStream;
-	enum KeyWord thisKeyWord;
+
 	enum TokenType thisTokenType;
+
+	// if thisTokenType is KEYWORD, thisKeyWord is valid
+	// else thisValue is valid
+	enum KeyWord thisKeyWord;
 	string thisValue;
+	
+	// store the begining of the next token
 	char buffer;
 
+	// tools
 	bool isKeyWord(const string& token);
 	bool isNumber(char ch);
 	bool isAlpha(char ch);

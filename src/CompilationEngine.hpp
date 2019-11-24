@@ -7,6 +7,7 @@ public:
 	CompilationEngine(string outputFile);
 	~CompilationEngine();
 
+	// compile a .jack file
 	void compileClass(JackTokenizer& jackTokenizer);
 
 private:
@@ -26,11 +27,12 @@ private:
 	void compileTerm(JackTokenizer& jackTokenizer);
 	void compileExpressionList(JackTokenizer& jackTokenizer);
 
-	// output current token
+	// output current terminal
 	void outputTerminal(JackTokenizer& jackTokenizer);
 	void outputNonTerminal(string nonTerminal, bool beginOrEnd);
 	bool isOp(string symbol);
 
+	// control output format
 	int level;
 };
 

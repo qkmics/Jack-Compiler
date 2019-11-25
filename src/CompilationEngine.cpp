@@ -13,22 +13,19 @@ void CompilationEngine::outputTerminal( JackTokenizer& jackTokenizer) {
 		outputStream << "  ";
 	}
 
-	if (jackTokenizer.tokenType() == KEYWORD) {
-		outputStream << "<keyword> " << Keywords[jackTokenizer.keyWord()] << " </keyword>" << endl;
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD) {
+		outputStream << "<keyword> " << Keywords[int(jackTokenizer.keyWord())] << " </keyword>" << endl;
 	}
-	else if (jackTokenizer.tokenType() == STRING_CONSTANT) {
+	else if (jackTokenizer.tokenType() == TokenType::STRING_CONSTANT) {
 		outputStream << "<stringConstant> " << jackTokenizer.stringVal() << " </stringConstant>" << endl;
 	}
-	else if (jackTokenizer.tokenType() == INT_CONSTANT) {
+	else if (jackTokenizer.tokenType() == TokenType::INT_CONSTANT) {
 		outputStream << "<integerConstant> " << jackTokenizer.intVal() << " </integerConstant>" << endl;
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) {
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputStream << "<identifier> " << jackTokenizer.identifier() << " </identifier>" << endl;
 	}
-	else if (jackTokenizer.tokenType() == KEYWORD) {
-		outputStream << "<keyword> " << jackTokenizer.keyWord() << " </keyword>" << endl;
-	}
-	else if (jackTokenizer.tokenType() == SYMBOL) {
+	else if (jackTokenizer.tokenType() == TokenType::SYMBOL) {
 		string output = jackTokenizer.symbol();
 		if (jackTokenizer.symbol() == "<")
 			output = "&lt;";
@@ -65,38 +62,38 @@ void CompilationEngine::compileClass(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("class", true);
 
 	// class
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == CLASS) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::CLASS) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// class name
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// {
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "{") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "{") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// class var dec
 	// static or field
-	while (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == STATIC || jackTokenizer.keyWord() == FIELD)) {
+	while (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::STATIC || jackTokenizer.keyWord() == KeyWord::FIELD)) {
 		compileClassVarDec(jackTokenizer);
 	}
 
 	// subroutine dec
-	while (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == CONSTRUCTOR || jackTokenizer.keyWord() == FUNCTION || jackTokenizer.keyWord() == METHOD)) {
+	while (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::CONSTRUCTOR || jackTokenizer.keyWord() == KeyWord::FUNCTION || jackTokenizer.keyWord() == KeyWord::METHOD)) {
 		compileSubroutine(jackTokenizer);
 	}
 
 	// }
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "}") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "}") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -108,20 +105,20 @@ void CompilationEngine::compileClassVarDec(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("classVarDec", true);
 
 	//static or field
-	if (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == STATIC || jackTokenizer.keyWord() == FIELD)) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::STATIC || jackTokenizer.keyWord() == KeyWord::FIELD)) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// type
 	// int, char or boolean
-	if (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == INT || jackTokenizer.keyWord() == CHAR || jackTokenizer.keyWord() == BOOLEAN)) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::INT || jackTokenizer.keyWord() == KeyWord::CHAR || jackTokenizer.keyWord() == KeyWord::BOOLEAN)) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) { 
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) { 
 		//class name
 
 		outputTerminal(jackTokenizer);
@@ -129,26 +126,26 @@ void CompilationEngine::compileClassVarDec(JackTokenizer& jackTokenizer) {
 	}
 
 	// var name
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// ,varname
-	while (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ",") {
+	while (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ",") {
 		// ,
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
 		// var name
-		if (jackTokenizer.tokenType() == IDENTIFIER) {
+		if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
 	}
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -159,25 +156,25 @@ void CompilationEngine::compileSubroutine(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("subroutineDec", true);
 
 	// constructor or function or method
-	if (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == CONSTRUCTOR || jackTokenizer.keyWord() == FUNCTION || jackTokenizer.keyWord() == METHOD)) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::CONSTRUCTOR || jackTokenizer.keyWord() == KeyWord::FUNCTION || jackTokenizer.keyWord() == KeyWord::METHOD)) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// type
 	// void
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == VOID) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::VOID) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == KEYWORD &&
-			(jackTokenizer.keyWord() == INT || jackTokenizer.keyWord() == CHAR || jackTokenizer.keyWord() == BOOLEAN)) {
+	else if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+			(jackTokenizer.keyWord() == KeyWord::INT || jackTokenizer.keyWord() == KeyWord::CHAR || jackTokenizer.keyWord() == KeyWord::BOOLEAN)) {
 		// int, char or boolean
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) {
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		//class name
 
 		outputTerminal(jackTokenizer);
@@ -185,13 +182,13 @@ void CompilationEngine::compileSubroutine(JackTokenizer& jackTokenizer) {
 	}
 
 	// subroutine name
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// (
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -200,7 +197,7 @@ void CompilationEngine::compileSubroutine(JackTokenizer& jackTokenizer) {
 	compileParameterList(jackTokenizer);
 
 	// )
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -208,20 +205,20 @@ void CompilationEngine::compileSubroutine(JackTokenizer& jackTokenizer) {
 	// subroutine body
 	outputNonTerminal("subroutineBody", true);
 	// {
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "{") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "{") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// var dec *
-	while (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == VAR) {
+	while (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::VAR) {
 		compileVarDec(jackTokenizer);
 	}
 	
 	compileStatements(jackTokenizer);
 
 	// }
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "}") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "}") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -234,14 +231,14 @@ void CompilationEngine::compileParameterList(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("parameterList", true);
 	
 	// type
-	if (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == INT || jackTokenizer.keyWord() == CHAR || jackTokenizer.keyWord() == BOOLEAN)) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::INT || jackTokenizer.keyWord() == KeyWord::CHAR || jackTokenizer.keyWord() == KeyWord::BOOLEAN)) {
 		// int, char or boolean
 
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) {
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		//class name
 
 		outputTerminal(jackTokenizer);
@@ -249,26 +246,26 @@ void CompilationEngine::compileParameterList(JackTokenizer& jackTokenizer) {
 	}
 
 	// var name
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// , type var name
-	while (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ",") {
+	while (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ",") {
 		// ,
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 		
 		// type
-		if (jackTokenizer.tokenType() == KEYWORD &&
-			(jackTokenizer.keyWord() == INT || jackTokenizer.keyWord() == CHAR || jackTokenizer.keyWord() == BOOLEAN)) {
+		if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+			(jackTokenizer.keyWord() == KeyWord::INT || jackTokenizer.keyWord() == KeyWord::CHAR || jackTokenizer.keyWord() == KeyWord::BOOLEAN)) {
 			// int, char or boolean
 
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
-		else if (jackTokenizer.tokenType() == IDENTIFIER) {
+		else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 			//class name
 
 			outputTerminal(jackTokenizer);
@@ -276,7 +273,7 @@ void CompilationEngine::compileParameterList(JackTokenizer& jackTokenizer) {
 		}
 
 		// var name
-		if (jackTokenizer.tokenType() == IDENTIFIER) {
+		if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
@@ -289,19 +286,19 @@ void CompilationEngine::compileVarDec(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("varDec", true);
 
 	// var
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == VAR) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::VAR) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// type
 	// int, char or boolean
-	if (jackTokenizer.tokenType() == KEYWORD &&
-		(jackTokenizer.keyWord() == INT || jackTokenizer.keyWord() == CHAR || jackTokenizer.keyWord() == BOOLEAN)) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD &&
+		(jackTokenizer.keyWord() == KeyWord::INT || jackTokenizer.keyWord() == KeyWord::CHAR || jackTokenizer.keyWord() == KeyWord::BOOLEAN)) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) {
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 
 		//class name
 		outputTerminal(jackTokenizer);
@@ -309,19 +306,19 @@ void CompilationEngine::compileVarDec(JackTokenizer& jackTokenizer) {
 	}
 
 	// var name
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// , var name
-	while (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ",") {
+	while (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ",") {
 		// ,
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 		
 		// var name
-		if (jackTokenizer.tokenType() == IDENTIFIER) {
+		if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
@@ -329,7 +326,7 @@ void CompilationEngine::compileVarDec(JackTokenizer& jackTokenizer) {
 	}
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -341,23 +338,23 @@ void CompilationEngine::compileStatements(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("statements", true);
 
 	// let or if or while or do or return
-	while (jackTokenizer.tokenType() == KEYWORD 
-		  && (jackTokenizer.keyWord() == LET || jackTokenizer.keyWord() == IF 
-	      || jackTokenizer.keyWord() == WHILE || jackTokenizer.keyWord() == DO 
-		  || jackTokenizer.keyWord() == RETURN)) {
-		if (jackTokenizer.keyWord() == LET) {
+	while (jackTokenizer.tokenType() == TokenType::KEYWORD 
+		  && (jackTokenizer.keyWord() == KeyWord::LET || jackTokenizer.keyWord() == KeyWord::IF 
+	      || jackTokenizer.keyWord() == KeyWord::WHILE || jackTokenizer.keyWord() == KeyWord::DO 
+		  || jackTokenizer.keyWord() == KeyWord::RETURN)) {
+		if (jackTokenizer.keyWord() == KeyWord::LET) {
 			compileLet(jackTokenizer);
 		}
-		else if (jackTokenizer.keyWord() == IF) {
+		else if (jackTokenizer.keyWord() == KeyWord::IF) {
 			compileIf(jackTokenizer);
 		}
-		else if (jackTokenizer.keyWord() == WHILE) {
+		else if (jackTokenizer.keyWord() == KeyWord::WHILE) {
 			compileWhile(jackTokenizer);
 		}
-		else if (jackTokenizer.keyWord() == DO) {
+		else if (jackTokenizer.keyWord() == KeyWord::DO) {
 			compileDo(jackTokenizer);
 		}
-		else if (jackTokenizer.keyWord() == RETURN) {
+		else if (jackTokenizer.keyWord() == KeyWord::RETURN) {
 			compileReturn(jackTokenizer);
 		}
 	}
@@ -368,26 +365,26 @@ void CompilationEngine::compileStatements(JackTokenizer& jackTokenizer) {
 void CompilationEngine::compileDo(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("doStatement", true);
 	// do
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == DO) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::DO) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// subroutine call
 	// subroutine name or class name or var name
-	if (jackTokenizer.tokenType() == IDENTIFIER) { 
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) { 
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// .subroutine name
 	// .
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ".") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ".") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
 		// subroutine name
-		if (jackTokenizer.tokenType() == IDENTIFIER) {
+		if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
@@ -395,7 +392,7 @@ void CompilationEngine::compileDo(JackTokenizer& jackTokenizer) {
 
 	// ( expression list )
 	// (
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
@@ -403,14 +400,14 @@ void CompilationEngine::compileDo(JackTokenizer& jackTokenizer) {
 		compileExpressionList(jackTokenizer);
 
 		// )
-		if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
 	}
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -421,20 +418,20 @@ void CompilationEngine::compileDo(JackTokenizer& jackTokenizer) {
 void CompilationEngine::compileLet(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("letStatement", true);
 	// let
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == LET) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::LET) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// var name
 	// identifier
-	if (jackTokenizer.tokenType() == IDENTIFIER) {
+	if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// [
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "[") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "[") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
@@ -442,14 +439,14 @@ void CompilationEngine::compileLet(JackTokenizer& jackTokenizer) {
 		compileExpression(jackTokenizer);
 
 		// ]
-		if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "]") {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "]") {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
 	}
 	
 	// =
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "=") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "=") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -458,7 +455,7 @@ void CompilationEngine::compileLet(JackTokenizer& jackTokenizer) {
 	compileExpression(jackTokenizer);
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -469,13 +466,13 @@ void CompilationEngine::compileWhile(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("whileStatement", true);
 
 	// while
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == WHILE) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::WHILE) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// (
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -484,13 +481,13 @@ void CompilationEngine::compileWhile(JackTokenizer& jackTokenizer) {
 	compileExpression(jackTokenizer);
 
 	// )
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// {
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "{") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "{") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -499,13 +496,13 @@ void CompilationEngine::compileWhile(JackTokenizer& jackTokenizer) {
 	compileStatements(jackTokenizer);
 
 	// }
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "}") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "}") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -517,17 +514,17 @@ void CompilationEngine::compileReturn(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("returnStatement", true);
 
 	// return
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == RETURN) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::RETURN) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	//expression
-	if (jackTokenizer.tokenType() != SYMBOL || jackTokenizer.symbol() != ";")
+	if (jackTokenizer.tokenType() != TokenType::SYMBOL || jackTokenizer.symbol() != ";")
 		compileExpression(jackTokenizer);
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -540,13 +537,13 @@ void CompilationEngine::compileIf(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("ifStatement", true);
 
 	// if
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == IF) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::IF) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// (
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -555,13 +552,13 @@ void CompilationEngine::compileIf(JackTokenizer& jackTokenizer) {
 	compileExpression(jackTokenizer);
 
 	// )
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// {
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "{") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "{") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -570,18 +567,18 @@ void CompilationEngine::compileIf(JackTokenizer& jackTokenizer) {
 	compileStatements(jackTokenizer);
 
 	// }
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "}") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "}") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
 
 	// else
-	if (jackTokenizer.tokenType() == KEYWORD && jackTokenizer.keyWord() == ELSE) {
+	if (jackTokenizer.tokenType() == TokenType::KEYWORD && jackTokenizer.keyWord() == KeyWord::ELSE) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
 		// {
-		if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "{") {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "{") {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
@@ -590,14 +587,14 @@ void CompilationEngine::compileIf(JackTokenizer& jackTokenizer) {
 		compileStatements(jackTokenizer);
 
 		// }
-		if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "}") {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "}") {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
 	}
 
 	// ;
-	if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ";") {
+	if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ";") {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
@@ -615,7 +612,7 @@ void CompilationEngine::compileExpression(JackTokenizer& jackTokenizer) {
 	compileTerm(jackTokenizer);
 
 	// op term
-	while (jackTokenizer.tokenType() == SYMBOL && isOp(jackTokenizer.symbol())) {
+	while (jackTokenizer.tokenType() == TokenType::SYMBOL && isOp(jackTokenizer.symbol())) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
@@ -628,23 +625,23 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("term", true);
 
 	// integer constant
-	if (jackTokenizer.tokenType() == INT_CONSTANT) {
+	if (jackTokenizer.tokenType() == TokenType::INT_CONSTANT) {
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == STRING_CONSTANT) {	
+	else if (jackTokenizer.tokenType() == TokenType::STRING_CONSTANT) {	
 		// string constant
 
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == KEYWORD) {
+	else if (jackTokenizer.tokenType() == TokenType::KEYWORD) {
 		// keyWord constant
 
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 	}
-	else if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+	else if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 		// (expression)
 		// (
 		outputTerminal(jackTokenizer);
@@ -654,13 +651,13 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 		compileExpression(jackTokenizer);
 
 		// )
-		if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();
 		}
 
 	}
-	else if (jackTokenizer.tokenType() == SYMBOL &&
+	else if (jackTokenizer.tokenType() == TokenType::SYMBOL &&
 		(jackTokenizer.symbol() == "-" || jackTokenizer.symbol() == "~")) {
 		// unary operation term
 		// unary operation
@@ -670,12 +667,12 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 		// term
 		compileTerm(jackTokenizer);
 	}
-	else if (jackTokenizer.tokenType() == IDENTIFIER) {
+	else if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 		// var name or var name [ expression ] or subroutine call
 		outputTerminal(jackTokenizer);
 		jackTokenizer.advance();
 
-		if (jackTokenizer.tokenType() == SYMBOL) {
+		if (jackTokenizer.tokenType() == TokenType::SYMBOL) {
 			// var name [ expression ] or subroutine call
 			// [ expression ]
 			// [
@@ -689,7 +686,7 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 				compileExpression(jackTokenizer);
 
 				// ]
-				if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "]") {
+				if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "]") {
 					outputTerminal(jackTokenizer);
 					jackTokenizer.advance();
 				}
@@ -698,12 +695,12 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 				//subroutine call
 				// .subroutine name
 				//.
-				if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ".") {
+				if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ".") {
 					outputTerminal(jackTokenizer);
 					jackTokenizer.advance();
 
 					// subroutine name
-					if (jackTokenizer.tokenType() == IDENTIFIER) {
+					if (jackTokenizer.tokenType() == TokenType::IDENTIFIER) {
 						outputTerminal(jackTokenizer);
 						jackTokenizer.advance();
 					}
@@ -711,7 +708,7 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 
 				// ( expression list )
 				// (
-				if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == "(") {
+				if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == "(") {
 					outputTerminal(jackTokenizer);
 					jackTokenizer.advance();
 
@@ -719,7 +716,7 @@ void CompilationEngine::compileTerm(JackTokenizer& jackTokenizer) {
 					compileExpressionList(jackTokenizer);
 
 					// )
-					if (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ")") {
+					if (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ")") {
 						outputTerminal(jackTokenizer);
 						jackTokenizer.advance();
 					}
@@ -738,12 +735,12 @@ void CompilationEngine::compileExpressionList(JackTokenizer& jackTokenizer) {
 	outputNonTerminal("expressionList", true);
 
 	// expression list is empty only if next token is )
-	if (jackTokenizer.tokenType() != SYMBOL || jackTokenizer.symbol() != ")") {
+	if (jackTokenizer.tokenType() != TokenType::SYMBOL || jackTokenizer.symbol() != ")") {
 		// expression
 		compileExpression(jackTokenizer);
 
 		// ,expression
-		while (jackTokenizer.tokenType() == SYMBOL && jackTokenizer.symbol() == ",") {
+		while (jackTokenizer.tokenType() == TokenType::SYMBOL && jackTokenizer.symbol() == ",") {
 			//,
 			outputTerminal(jackTokenizer);
 			jackTokenizer.advance();

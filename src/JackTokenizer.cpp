@@ -5,8 +5,8 @@
 JackTokenizer::JackTokenizer(string inputFile) {
 	inputStream.open(inputFile);
 
-	thisTokenType = KEYWORD;
-	thisKeyWord = LET;
+	thisTokenType = TokenType::KEYWORD;
+	thisKeyWord = KeyWord::LET;
 	thisValue = "";
 	buffer = ' ';
 	advance();
@@ -77,7 +77,7 @@ void JackTokenizer::advance() {
 				advance();
 			}
 			else {
-				thisTokenType = SYMBOL;
+				thisTokenType = TokenType::SYMBOL;
 				thisValue = nextToken;
 				buffer = nextChar;
 			}
@@ -92,7 +92,7 @@ void JackTokenizer::advance() {
 					inputStream.get(nextChar);
 				}
 
-				thisTokenType = INT_CONSTANT;
+				thisTokenType = TokenType::INT_CONSTANT;
 				thisValue = nextToken;
 			}
 			else if (nextChar == '"') {
@@ -107,7 +107,7 @@ void JackTokenizer::advance() {
 				// this line is vital, because current "nextChar" is "
 				inputStream.get(nextChar);
 
-				thisTokenType = STRING_CONSTANT;
+				thisTokenType = TokenType::STRING_CONSTANT;
 				thisValue = nextToken;
 			}
 			else if (isAlpha(nextChar) || nextChar == '_') {
@@ -122,14 +122,14 @@ void JackTokenizer::advance() {
 				{
 					//keyword 
 
-					thisTokenType = KEYWORD;
+					thisTokenType = TokenType::KEYWORD;
 				}
 				else
 				{
 					//identifier
 
 					thisValue = nextToken;
-					thisTokenType = IDENTIFIER;
+					thisTokenType = TokenType::IDENTIFIER;
 				}
 			}
 			else {
@@ -138,7 +138,7 @@ void JackTokenizer::advance() {
 				nextToken.push_back(nextChar);
 				inputStream.get(nextChar);
 
-				thisTokenType = SYMBOL;
+				thisTokenType = TokenType::SYMBOL;
 				thisValue = nextToken;
 			}
 

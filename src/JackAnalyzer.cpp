@@ -1,6 +1,8 @@
 #include "JackAnalyzer.hpp"
 #include "JackTokenizer.hpp"
 #include "CompilationEngine.hpp"
+#include "SymbolTable.hpp"
+
 #if defined _WIN32
 #include <filesystem>
 #elif defined __linux__
@@ -16,11 +18,14 @@ void JackAnalyzer::analyze(string sourceName) {
 		// create a JackTokenizer
 		JackTokenizer jackTokenizer(inputNames[index]);
 
+		// create a SymbolTable
+		SymbolTable symbolTable;		
+
 		// create a CompilationEngine
 		CompilationEngine compilationEngine(outputNames[index]);
 
 		// CompilationEngine do compiling
-		compilationEngine.compileClass(jackTokenizer);
+		compilationEngine.compileClass(jackTokenizer, symbolTable);
 	}
 
 }

@@ -147,8 +147,8 @@ void JackTokenizer::advance() {
 	}
 }
  bool JackTokenizer::isKeyWord(const string& token) {
-	for (int index = 0; index < Keywords.size(); index++) {
-		if (token == Keywords[index]) {
+	for (int index = 0; index < KeyWordString.size(); index++) {
+		if (token == KeyWordString[index]) {
 			thisKeyWord = (enum KeyWord)index;
 			return true;
 		}

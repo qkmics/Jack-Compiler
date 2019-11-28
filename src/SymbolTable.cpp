@@ -52,8 +52,6 @@ void SymbolTable::define(const string& name, const string& type, IdentifierKind 
 	else if (kind == IdentifierKind::ARG || kind == IdentifierKind::VAR) {
 		subroutineTable[name] = tableItem;
 	}
-	cout << "define " << name << " " << tableItem.type << " " << (int)tableItem.kind << " " << tableItem.index << endl;
-
 }
 
 // get attributes of a identifier using name

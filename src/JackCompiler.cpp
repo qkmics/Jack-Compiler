@@ -1,7 +1,8 @@
-#include "JackAnalyzer.hpp"
+#include "JackCompiler.hpp"
 #include "JackTokenizer.hpp"
 #include "CompilationEngine.hpp"
 #include "SymbolTable.hpp"
+#include "VMWriter.hpp"
 
 #if defined _WIN32
 #include <filesystem>
@@ -9,7 +10,7 @@
 #include <dirent.h>
 #endif
 
-void JackAnalyzer::analyze(string sourceName) {
+void JackCompiler::analyze(string sourceName) {
 	vector<string> inputNames, outputNames;
 	getFileName(sourceName, inputNames, outputNames);
 	for (int index = 0;index < inputNames.size();index++) {
@@ -19,24 +20,27 @@ void JackAnalyzer::analyze(string sourceName) {
 		JackTokenizer jackTokenizer(inputNames[index]);
 
 		// create a SymbolTable
-		SymbolTable symbolTable;		
+		SymbolTable symbolTable;	
+
+		// create a VMWriter
+		VMWriter vMWriter(outputNames[index]);
 
 		// create a CompilationEngine
-		CompilationEngine compilationEngine(outputNames[index]);
+		CompilationEngine compilationEngine;
 
 		// CompilationEngine do compiling
-		compilationEngine.compileClass(jackTokenizer, symbolTable);
+		compilationEngine.compileClass(jackTokenizer, symbolTable, vMWriter);
 	}
 
 }
 
-void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, vector<string>& outputNames) {
+void JackCompiler::getFileName(string sourceName, vector<string>& inputNames, vector<string>& outputNames) {
 
 	if (sourceName.size() > 5 && sourceName.substr(sourceName.size() - 5) == ".jack") {
 		// single .jack file
 		cout << "input " << sourceName << endl;
 		inputNames.push_back(sourceName);
-		outputNames.push_back(sourceName.substr(0, sourceName.size() - 5) + ".my.xml");
+		outputNames.push_back(sourceName.substr(0, sourceName.size() - 5) + ".vm");
 	}
 	else {
 		// input sourceName is a directory containing many .jack files
@@ -54,7 +58,7 @@ void JackAnalyzer::getFileName(string sourceName, vector<string>& inputNames, ve
 				cout << "Compiling " << fileName << endl;
 
 				inputNames.push_back(fileName);
-				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
+				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".vm");
 			}
 		}
 

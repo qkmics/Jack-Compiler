@@ -1,4 +1,4 @@
-#include "JackAnalyzer.hpp"
+#include "JackCompiler.hpp"
 #include "JackTokenizer.hpp"
 #include "CompilationEngine.hpp"
 
@@ -13,8 +13,8 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	
-	shared_ptr<JackAnalyzer> jackAnalyzer(new JackAnalyzer());
-	jackAnalyzer->analyze(sourceName);
+	shared_ptr<JackCompiler> jackCompiler(new JackCompiler());
+	jackCompiler->analyze(sourceName);
 	
 	return 0;
 }

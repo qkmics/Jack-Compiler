@@ -20,7 +20,7 @@ bool JackTokenizer::hasMoreTokens() {
 	return !inputStream.eof();
 }
 
-enum TokenType JackTokenizer::tokenType() {
+TokenType JackTokenizer::tokenType() {
 	return thisTokenType;
 }
 
@@ -146,7 +146,8 @@ void JackTokenizer::advance() {
 		}
 	}
 }
- bool JackTokenizer::isKeyWord(const string& token) {
+ 
+bool JackTokenizer::isKeyWord(const string& token) {
 	for (int index = 0; index < KeyWordString.size(); index++) {
 		if (token == KeyWordString[index]) {
 			thisKeyWord = (enum KeyWord)index;
@@ -155,7 +156,7 @@ void JackTokenizer::advance() {
 	}
 	return false;
 }
-enum KeyWord JackTokenizer::keyWord() {
+KeyWord JackTokenizer::keyWord() {
 	return thisKeyWord;
 }
 string JackTokenizer::symbol() {

@@ -12,10 +12,11 @@ public:
 	void advance();
 
 	// return type of currenct token
-	enum class TokenType tokenType();
+	TokenType tokenType();
 
 	// return value of current token
-	enum class KeyWord keyWord();
+	KeyWord keyWord();
+	
 	string symbol();
 	string identifier();
 	string intVal();
@@ -24,11 +25,11 @@ public:
 private:
 	ifstream inputStream;
 
-	enum class TokenType thisTokenType;
+	TokenType thisTokenType;
 
 	// if thisTokenType is TokenType::KEYWORD, thisKeyWord is valid
 	// else thisValue is valid
-	enum class KeyWord thisKeyWord;
+	KeyWord thisKeyWord;
 	string thisValue;
 	
 	// store the begining of the next token

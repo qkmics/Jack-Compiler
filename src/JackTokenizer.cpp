@@ -34,7 +34,7 @@ bool JackTokenizer::isAlpha(char ch) {
 void JackTokenizer::advance() {
 	string nextToken = "";
 	char nextChar = buffer;
-	while (nextChar == ' ' || nextChar == '\t' || nextChar == '\n' && hasMoreTokens()) {
+	while ((nextChar == ' ' || nextChar == '\t' || nextChar == '\n' || nextChar == '\r') && hasMoreTokens()) {
 		inputStream.get(nextChar);
 	}
 	if (hasMoreTokens()) {

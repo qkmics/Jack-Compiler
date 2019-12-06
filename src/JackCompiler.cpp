@@ -82,7 +82,7 @@ void JackCompiler::getFileName(string sourceName, vector<string>& inputNames, ve
 				cout << "Compiling " << fileName << endl;
 
 				inputNames.push_back(fileName);
-				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".my.xml");
+				outputNames.push_back(fileName.substr(0, fileName.size() - 5) + ".vm");
 			}
 		}
 
